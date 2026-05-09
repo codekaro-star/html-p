@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        textarea {
+            width: 80%;
+            height: 120px;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: cyan;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🛡️ PhishGuard</h1>
+<p>Paste suspicious message or link below:</p>
+
+<textarea id="inputText" placeholder="Paste email, SMS or link here..."></textarea><br><br>
+
+<button onclick="checkPhishing()">Check for Phishing</button>
+<button onclick="showEducation()">Learn How to Stay Safe</button>
+
+<div class="result" id="result"></div>
+
+<!-- THIS IS THE TARGET SECTION -->
+<div class="result" id="educationSection"></div>
+
+<script>
+let savedEducation = [];
+
+function checkPhishing() {
+    let text = document.getElementById("inputText").value.toLowerCase();
+    let score = 0;
+    let reasons = [];
+    let education = [];
+
+    let phishingWords = ["urgent", "verify", "password", "otp", "bank", "click here", "login", "account locked","unusual activity",
+    "suspended","confirm your identity", "security alert","limited time", "act now", "prize", "winner", "free", "claim",
+    "reset your password", "update your account"
+    ];
+    if (text.includes("http")) {
+    score++;
+    reasons.push("Message contains a link, which can be dangerous.");
+    education.push("Never click unknown links in emails or SMS.");
+    }
+
+
+    phishingWords.forEach(word => {
+        if (text.includes(word)) {
+            score++;
+            reasons.push("Contains suspicious word: " + word);
+            education.push("Scammers use words like '" + word + "' to create fear or urgency.");
+        }
+    });
+
+    if (text.includes("http") && !text.includes("https")) {
+        score++;
+        reasons.push("Link is not secure (no HTTPS)");
+        education.push("Always check for HTTPS before clicking a link.");
+    }
+
+    let resultText = "";
+
+    if (score >= 4) {
+        resultText = "🔴 High Risk: Phishing Detected";
+    } else if (score >= 2) {
+        resultText = "🟡 Medium Risk: Suspicious Content";
+    } else {
+        resultText = "🟢 Low Risk: Looks Safe";
+    }
+
+    document.getElementById("result").innerHTML =
+        "<b>" + resultText + "</b><br><br>Reasons:<br>" + reasons.join("<br>");
+
+    // save education content but DON'T show yet
+    savedEducation = education;
+    document.getElementById("educationSection").innerHTML = "";
+}
+
+function showEducation() {
+    if (savedEducation.length === 0) {
+        document.getElementById("educationSection").innerHTML =
+            "<br><b>📘 Education Mode:</b><br>No education tips available.";
+    } else {
+        document.getElementById("educationSection").innerHTML =
+            "<br><b>📘 Education Mode:</b><br>" + savedEducation.join("<br>");
+    }
+}
+</script>
+
+
+</body>
+</html>
