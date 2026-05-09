@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Age Calculator</title>
+        <style>
+            body{
+                margin: 0;
+                padding: 20px;
+                background-color: #3fdbe930;
+            }
+            .container{
+                max-width: 900px;
+                min-height: 240px; /* Changed from fixed height to min-height */
+                padding: 20px;     /* Added padding so content doesn't touch the edges */
+                background-color: white;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+                margin: auto;
+                border-radius: 10px;
+                margin-top: 18%;
+            }
+            h1{
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 40px;
+                text-align: center;
+                color: darkslateblue;
+                margin-top: 20px;
+            }
+            .form{
+                display: flex;
+                justify-content: center; /* Centers the form items */
+                align-items: center;
+                margin-top: 20px;
+                gap: 20px;
+                flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            }
+            .fon{
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-weight: bolder;
+            }
+            label{
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            input{
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 100%;
+                max-width: 300px;
+            }
+            button{
+                padding: 10px 20px;
+                background-color: #00bbff5a;
+                color: rgba(19, 116, 32, 0.955);
+                border-radius: 4px; /* Fixed invalid 'none' value */
+                margin-top: 10px;
+                cursor:pointer;
+                transition: background-color 0.3s ease;
+            }
+            button:hover{
+                background-color: #00bbff;
+            }
+            #result{
+                margin-top: 30px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center; /* Centers the final text */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>AGE CALCULATOR</h1>
+            <div class="form">
+                <label for="birthday" class="fon">Enter your date of birth</label>
+                <input type="date" id="birthday" name="birthday" placeholder="DD-MM-YYYY">
+                <button id="btn" class="fon">Calculate Age</button>
+            </div>
+            <!-- Moved outside the flex container to display below the button -->
+            <p id="result" class="fon"></p> 
+        </div>
+
+        <script>
+            const btnEI = document.getElementById('btn');
+            const birthdayEI = document.getElementById('birthday');
+            const resultEI = document.getElementById('result');
+
+            function calculateAge() {
+                const birthdayValue = birthdayEI.value;
+
+                if (!birthdayValue) {
+                    alert('Please enter your birthday');
+                    return; 
+                } 
+
+                const age = getAge(birthdayValue);
+
+                if (age.years < 0) {
+                    resultEI.innerText = "Your birthday cannot be in the future!";
+                    return;
+                }
+
+                resultEI.innerText = `Your age is ${age.years} years, ${age.months} months and ${age.days} days old.`;
+            }
+
+            function getAge(birthdayValue) {
+                const currentDate = new Date();
+                
+                const [birthYear, birthMonth, birthDay] = birthdayValue.split('-');
+                const birthDate = new Date(birthYear, birthMonth - 1, birthDay);
+
+                let years = currentDate.getFullYear() - birthDate.getFullYear();
+                let months = currentDate.getMonth() - birthDate.getMonth();
+                let days = currentDate.getDate() - birthDate.getDate();
+
+                if (days < 0) {
+                    months--;
+                    const lastMonth = new Date(
+                        currentDate.getFullYear(),
+                        currentDate.getMonth(), 
+                        0 
+                    );
+                    days += lastMonth.getDate();
+                }
+
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                return {
+                    years: years,
+                    months: months,
+                    days: days
+                };
+            }
+
+            btnEI.addEventListener('click', calculateAge);
+        </script>
+    </body>
+</html>
